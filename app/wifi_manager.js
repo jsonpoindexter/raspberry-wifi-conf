@@ -101,6 +101,12 @@ module.exports = function() {
                     next_step();
                 });
             },
+            function restart(next_step){
+                exec("sudo service networking restart", function(error, stdout, stderr) {
+                    if (!error) console.log("service networking restart successful...");
+                    next_step();
+                });
+            },
             function up(next_step) {
                 exec("sudo ifup " + wlan_iface, function(error, stdout, stderr) {
                     if (!error) console.log("ifup " + wlan_iface + " successful...");
@@ -249,7 +255,7 @@ module.exports = function() {
 
             if (result_ip) {
                 console.log("\nWifi connection is enabled with IP: " + result_ip);
-                return callback(null);
+                //return callback(null);
             }
 
             async.series([
