@@ -122,6 +122,7 @@ module.exports = function() {
         // inet_addr - wifi is enabled!
         if (null        == _is_ap_enabled_sync(info) &&
             "<unknown>" != info["inet_addr"]         &&
+            "192.168.44.1" != info["inet_addr"]         &&
             "<unknown>" == info["unassociated"] ) {
             return info["inet_addr"];
         }
@@ -220,27 +221,33 @@ module.exports = function() {
                         "/etc/default/hostapd",
                         context, next_step);
                 },
-
+                function restart_daemon_reload(next_step) {
+                    exec("systemctl daemon-reload", function(error, stdout, stderr) {
+                        //console.log(stdout);
+                        if (!error) console.log("... daemon-reload completed!");
+                        next_step();
+                    });
+                },
                 function reboot_network_interfaces(next_step) {
                     _reboot_wireless_network(context.wifi_interface, next_step);
                 },
 
-                function restart_dhcp_service(next_step) {
+                /*
+                function restart_isc_dhcp_server(next_step) {
                     exec("service isc-dhcp-server restart", function(error, stdout, stderr) {
                         //console.log(stdout);
                         if (!error) console.log("... dhcp server restarted!");
                         next_step();
                     });
                 },
-
                 function restart_hostapd_service(next_step) {
                     exec("service hostapd restart", function(error, stdout, stderr) {
                         //console.log(stdout);
+                        //console.log(stderr);
                         if (!error) console.log("... hostapd restarted!");
                         next_step();
                     });
-                },
-
+                },  */
                 // TODO: Do we need to issue a reboot here?
 
             ], callback);

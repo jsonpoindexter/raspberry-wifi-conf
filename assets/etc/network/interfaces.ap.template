@@ -9,5 +9,7 @@ iface eth0 inet dhcp
 
 allow-hotplug wlan0
 iface wlan0 inet static
+  post-up /usr/sbin/hostapd -B /etc/hostapd/hostapd.conf
+  post-up service isc-dhcp-server restart
   address {{ ip_addr }}
   netmask {{ netmask }}
